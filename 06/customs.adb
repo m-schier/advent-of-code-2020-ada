@@ -51,15 +51,11 @@ package body Customs is
         Result  : Natural := 0;
     begin
         for P of Group loop
-            for I in Question_Range loop
-                Union(I) := Union(I) or P(I);
-            end loop;
+            Union := Union or P;
         end loop;
 
-        for I in Question_Range loop
-            if Union(I) then
-                Result := Result + 1;
-            end if;
+        for I of Union loop
+            Result := Result + Boolean'Pos(I);
         end loop;
         return Result;
     end Group_Union_Count;
@@ -76,15 +72,11 @@ package body Customs is
         end if;
 
         for P of Group loop
-            for I in Question_Range loop
-                Intersection(I) := Intersection(I) and P(I);
-            end loop;
+            Intersection := Intersection and P;
         end loop;
 
-        for I in Question_Range loop
-            if Intersection(I) then
-                Result := Result + 1;
-            end if;
+        for I of Intersection loop
+            Result := Result + Boolean'Pos(I);
         end loop;
         return Result;
     end Group_Intersection_Count;
