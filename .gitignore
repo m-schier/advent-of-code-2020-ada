@@ -1,0 +1,13 @@
+# Ignore extensionless executables
+*
+!/**/
+!*.*
+
+# Ignore intermediate binary files
+*.out
+*.o
+*.ali
+
+# Do not include actual input files
+*.txt
+
