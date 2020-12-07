@@ -8,15 +8,21 @@ package body Passport is
     end Create_Passport_Record;
 
     procedure Parse_Passport_Line(Line: Unbounded_String; Passport: out Passport_Record) is
-        Start_Pos : Natural := 1;
-        Next_Space_Pos, Colon_Pos : Natural;
-        Key, Value : Unbounded_String;
+        Start_Pos                   : Natural := 1;
+        Next_Space_Pos, Colon_Pos   : Natural;
+        Key                         : String(1 .. 3);
+        Value                       : Unbounded_String;
     begin
         while True loop
             Colon_Pos := Index(Source => Line, Pattern => ":", From => Start_Pos);
             Next_Space_Pos := Index(Source => Line, Pattern => " ", From => Colon_Pos);
 
-            Key := Unbounded_Slice(Source => Line, Low => Start_Pos, High => Colon_Pos - 1);
+            -- We can't parse keys with length other than 3 and shouldn't be required to
+            if Colon_Pos - Start_Pos /= 3 then
+                raise Passport_Field_Error;
+            end if;
+
+            Key := Slice(Source => Line, Low => Start_Pos, High => Colon_Pos - 1);
             Value := Unbounded_Slice(Source => Line, Low => Colon_Pos + 1, High => (if Next_Space_Pos = 0 then Length(Line) else Next_Space_Pos - 1));
 
             if Key = "byr" then
