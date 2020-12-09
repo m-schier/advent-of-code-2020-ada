@@ -38,34 +38,63 @@ package body Xmas is
         raise No_Solution_Error;
     end Find_Invalid;
 
-    function Find_Range(Input: Integer_Vectors.Vector; Target: UInt64) return UInt64 is
-        Sum, C, Min, Max    : UInt64;
-        J                   : Integer;
+    -- @Function: Find_Sum_Window
+    -- @Description: Find the consecutive range on the vector whose sum equals target in linear time complexity
+    function Find_Sum_Window(Input: Integer_Vectors.Vector; Target: UInt64; Low: out Integer; High: out Integer) return Boolean is
+        Sum : UInt64 := 0;
     begin
-        for I in 0 .. Integer(Input.Length) - 1 loop
-            Sum := Input.Element(I);
-            Min := Sum;
-            Max := Sum;
-            J := I + 1;
+        -- Initialize with empty window at first element
+        Low  := 0;
+        High := -1;
 
-            while Sum < Target and J < Integer(Input.Length) loop
-                C := Input.Element(J);
-                Sum := Sum + C;
+        while Low < Integer(Input.Length) loop
+            -- While sum in window too small or window empty, increase window
+            while Low > High or Sum < Target loop
+                High := High + 1;
 
-                if C < Min then
-                    Min := C;
-                elsif C > Max then
-                    Max := C;
+                if High >= Integer(Input.Length) then
+                    -- Immediately abort if the sum is too small but we can't enlarge
+                    return False;
                 end if;
 
-                J := J + 1;
+                Sum := Sum + Input.Element(High);
+            end loop;
+
+            -- While sum in window too large and able, shrink window
+            while Sum > Target and Low <= High loop
+                Sum := Sum - Input.Element(Low);
+                Low := Low + 1;
             end loop;
 
             if Sum = Target then
-                return Min + Max;
+                return True;
             end if;
         end loop;
 
-        raise No_Solution_Error;
+        return False;
+    end Find_Sum_Window;
+
+    function Find_Range(Input: Integer_Vectors.Vector; Target: UInt64) return UInt64 is
+        C, Min, Max : UInt64;
+        Low, High   : Integer;
+    begin
+        if not Find_Sum_Window(Input, Target, Low, High) then
+            raise No_Solution_Error;
+        end if;
+
+        Min := Input.Element(Low);
+        Max := Min;
+
+        for I in Low + 1 .. High loop
+            C := Input.Element(I);
+
+            if C < Min then
+                Min := C;
+            elsif C > Max then
+                Max := C;
+            end if;
+        end loop;
+
+        return Min + Max;
     end Find_Range;
 end Xmas;
