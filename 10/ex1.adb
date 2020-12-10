@@ -3,7 +3,7 @@ with Ada.Integer_Text_IO;   use Ada.Integer_Text_IO;
 with Jolts;                 use Jolts;
 
 procedure Ex1 is
-    Input : Integer_Vectors.Vector;
+    Input : Natural_Vectors.Vector;
 begin
     Input := Parse;
     Put(Item => Differences(Input), Width => 0);
