@@ -48,7 +48,6 @@ package body Jolts is
 
     function Solutions(Input: in out Natural_Vectors.Vector) return UInt64 is
         Cache : UInt64_Vectors.Vector;
-        Current_Index : Natural;
         Count : UInt64;
     begin
         Preprocess(Input);
@@ -64,15 +63,14 @@ package body Jolts is
         Cache.Append(1);
 
         -- Loop entries before output in reverse
-        for I in Input.First_Index + 1 .. Input.Last_Index loop
-            Current_Index := Input.Last_Index - I + Input.First_Index;
+        for I in reverse Input.First_Index .. Input.Last_Index - 1 loop
             Count := 0;
 
-            for J in Current_Index + 1 .. Input.Last_Index loop
-                exit when Input.Element(Current_Index) + 3 < Input.Element(J);
+            for J in I + 1 .. Input.Last_Index loop
+                exit when Input.Element(I) + 3 < Input.Element(J);
                 Count := Count + Cache.Element(J);
             end loop;
-            Cache.Replace_Element(Current_Index, Count);
+            Cache.Replace_Element(I, Count);
         end loop;
 
         return Cache.Element(0);
