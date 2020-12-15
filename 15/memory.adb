@@ -39,9 +39,10 @@ package body Memory is
                 end if;
             end if;
 
-            if I > 1 then
-                Last_Occurrence.Replace_Element(Last_Spoken, I - 1);
-            end if;
+            -- On the first iteration, writing 0 => 0 here, which is a
+            -- safe "garbage" value so no need to check for iteration.
+            -- All other iterations writing actually desired values.
+            Last_Occurrence.Replace_Element(Last_Spoken, I - 1);
         end loop;
 
         return Spoken;
