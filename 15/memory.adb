@@ -14,12 +14,14 @@ package body Memory is
         Last_Time       : Natural;
         Can_Read        : Boolean := True;
     begin
+        Last_Occurrence.Reserve_Capacity(Count_Type(N + 1));
+
+        for I in 0 .. N loop
+            Last_Occurrence.Append(0);
+        end loop;
+
         for I in 1 .. N loop
             Last_Spoken := Spoken;
-
-            while Last_Occurrence.Last_Index < Last_Spoken loop
-                Last_Occurrence.Append(0);
-            end loop;
 
             -- Once we reach end of file no longer check, turns out to be a rather large improvement
             Can_Read := Can_Read and then not End_Of_File;
